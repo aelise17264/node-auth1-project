@@ -1,8 +1,11 @@
 const express = require('express')
 const helmet = require('helmet')
 
+const userRouter = require('../users/users-router')
+const authRouter = require('../auth/auth-router')
 const server = express()
 
+const protected = require('../auth/protected-mw')
 const session = require('express-session')
 const sessionConfig = {
     name: 'assignmentCookie',
@@ -19,6 +22,9 @@ const sessionConfig = {
 server.use(helmet())
 server.use(express.json())
 server.use(session(sessionConfig))
+
+server.use('/api/auth', authRouter)
+server.use('/api/users', protected, userRouter)
 
 server.get('/', (req, res) => {
     res.json({
